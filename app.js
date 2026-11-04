@@ -95,6 +95,7 @@ function render() {
   }
   if (modo === 'validado') {
     btn('Compartilhar PDF (WhatsApp)', 'pri', compartilharPDF);
+    btn('Baixar PDF', '', baixarPDF);
     if (!(store.get('validados', {})[R.id] || {}).enviado) btn('Marcar como enviado', '', () => { marcarEnviado(R.id); render(); status('Marcado como enviado.', 'ok'); });
   }
   if (modo !== 'novo' && modo !== 'aguardando' && modo !== 'conferir') btn('Novo recibo', '', () => { location.hash = ''; iniciar(); });
@@ -262,6 +263,16 @@ async function gerarPDF() {
   return doc.save();
 }
 const strip = ({ cod, ...x }) => x;
+async function baixarPDF() {
+  const file = await arquivoPDF();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  status('PDF baixado (pasta Downloads; no iPhone/iPad, em Arquivos → Downloads). Depois de enviá-lo, toque em "Marcar como enviado".');
+}
+async function arquivoPDF() {
+  return new File([await gerarPDF()], `Recibo-S24-${R.d}-${R.id.slice(0, 5)}.pdf`, { type: 'application/pdf' });
+}
 async function compartilharPDF() {
   const bytes = await gerarPDF();
   const nome = `Recibo-S24-${R.d}-${R.id.slice(0, 5)}.pdf`;
