@@ -12,7 +12,11 @@ Sem servidor, sem login e sem banco de dados: tudo roda no navegador.
 - O app recusa a conferência se a chave for a mesma de quem preencheu.
 - Se os dados forem alterados depois da 1ª assinatura, a assinatura fica inválida e a conferência é bloqueada.
 - Tipo padrão **Donativo**; **Depósito no cofre** bloqueado; **Pagamento**/**Adiantamento** pedem confirmação.
-- Valores `1.234,56` (sem R$); data `dd-mm-aaaa`; total automático.
+- Valores `1.234,56` (sem R$); data `dd/mm/aaaa`; total automático.
+- Valores negativos (ex.: `-10,00`) em vermelho, na tela e no PDF. Para pôr o sinal, toque em **± negativo** ou digite `-`.
+- Total acima de **999,99** pede confirmação de quem preenche e aparece como alerta para quem confere.
+- Celular **em pé**: tocar num campo abre uma caixa grande para digitar. Deitado (e no tablet ou computador), digita-se direto no formulário.
+- **Conferir: ler QR Code** lê o código pela câmera dentro do app. No Android usa o leitor do próprio Chrome; nos outros, uma biblioteca que só é carregada nessa hora.
 
 ## Publicar (GitHub Pages)
 Settings → Pages → Branch `main`, pasta `/ (root)`. Precisa de HTTPS (a criptografia do navegador exige).
@@ -47,3 +51,8 @@ Na tela inicial de quem conferiu aparece a lista dos recibos validados que ainda
 - **Enviar**: gera o PDF de novo e abre o compartilhamento (WhatsApp).
 - Ao compartilhar, o recibo sai da lista sozinho. Se o PDF foi só baixado, toque em **Já enviei** (ou **Marcar como enviado**).
 - Recibos enviados há mais de 60 dias são apagados do aparelho.
+
+## Verificação automática das assinaturas
+- Antes de gerar qualquer PDF, o app confere as duas assinaturas. Se algo não bater, o PDF não é gerado.
+- **Verificar PDF** (no topo): escolha um PDF recebido e o app diz se é autêntico e mostra os dados assinados, para comparar com o PDF.
+- **Android** (app instalado): no WhatsApp, compartilhe o PDF com o app **Recibo S-24** e a verificação abre sozinha. O iPhone/iPad não permite isso; use **Verificar PDF**.
