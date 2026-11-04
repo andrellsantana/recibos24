@@ -13,7 +13,9 @@
 <body>
 <header class="bar">
   <strong>Recibo S-24</strong>
-  <button id="btnEu" class="link" type="button"></button>
+  <span><button id="btnVerificar" class="link" type="button">Verificar PDF</button>
+  <button id="btnEu" class="link" type="button"></button></span>
+  <input id="arqPDF" type="file" accept="application/pdf,.pdf" hidden>
 </header>
 
 <div id="instalar" class="instalar" hidden>
@@ -28,7 +30,7 @@
 
   <div class="t neg" style="left:23pt;top:37.4pt">Escolha o tipo:</div>
   <div class="t neg" style="left:270pt;top:37.4pt">Data:</div>
-  <input id="data" class="campo" style="left:303pt;top:34pt;width:69pt" inputmode="numeric" placeholder="dd-mm-aaaa" maxlength="10" autocomplete="off">
+  <input id="data" class="campo" style="left:303pt;top:34pt;width:69pt" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="off">
 
   <button type="button" class="tipo" data-tipo="Donativo" style="left:37pt;top:50pt"><span class="cx"></span>Donativo</button>
   <button type="button" class="tipo" data-tipo="Deposito" style="left:37pt;top:62pt" disabled><span class="cx"></span>Depósito no cofre</button>
@@ -67,6 +69,25 @@
   <p>Peça para quem vai <b>conferir</b> apontar a câmera do celular para este código:</p>
   <div id="qr"></div>
 </section>
+
+<button id="btnSinal" class="sinal" type="button" hidden>± negativo</button>
+
+<dialog id="dlgEditor" class="editor">
+  <label id="edRotulo" for="edInput"></label>
+  <input id="edInput" autocomplete="off">
+  <menu>
+    <button type="button" id="edSinal" class="sec">± negativo</button>
+    <button type="button" id="edProx" class="sec">Próximo ›</button>
+    <button type="button" id="edOk">OK</button>
+  </menu>
+</dialog>
+
+<dialog id="dlgQR" class="leitor">
+  <p><b>Aponte para o QR Code do recibo</b></p>
+  <video id="qrVideo" playsinline muted></video>
+  <p id="qrMsg" class="peq"></p>
+  <menu><button type="button" id="qrFechar" class="sec">Fechar</button></menu>
+</dialog>
 
 <dialog id="dlgNome">
   <form method="dialog">

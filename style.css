@@ -58,3 +58,11 @@ dialog button.sec{background:#fff;color:#333;border:1px solid #bbb}
 .instBtns{display:flex;gap:6px}
 .instBtns button{min-height:34px;padding:0 10px;border-radius:8px;border:1px solid #a9c2ea;background:#fff;font-size:14px}
 #btnInstalar{background:var(--azul);color:#fff;border-color:var(--azul)}
+.negativo,input.valor.negativo,#total.negativo{color:#c00000 !important;-webkit-text-fill-color:#c00000 !important}
+.bar span{display:flex;gap:14px}
+.sinal{position:fixed;right:16px;bottom:16px;z-index:10;min-height:44px;padding:0 16px;font-size:16px;border-radius:22px;border:1px solid #c00000;background:#fff;color:#c00000;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.editor{margin:auto auto 0;max-width:600px;border-radius:14px 14px 0 0}
+.editor label{display:block;font-weight:600;margin-bottom:8px}
+.editor input{font-size:24px;padding:12px}
+.editor menu{flex-wrap:wrap}
+.leitor video{width:100%;border-radius:8px;background:#000;aspect-ratio:1;object-fit:cover}
