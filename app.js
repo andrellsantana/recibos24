@@ -88,6 +88,10 @@ function render() {
   if (modo === 'aguardando') {
     btn('Enviar link pelo WhatsApp', 'pri', () => abrirWhats(`Recibo S-24 para conferir (total ${fmtValor(total(R))}):\n${linkRecibo()}`));
     btn('Cancelar recibo', 'perigo', () => cancelar('A'));
+    btn('Já foi conferido — novo recibo', '', () => {
+      if (!confirm('A outra pessoa já conferiu e validou este recibo?\n\nA tela será limpa para um novo recibo.')) return;
+      store.del('pendente'); location.hash = ''; iniciar();
+    });
   }
   if (modo === 'conferir') {
     btn('Conferido — assinar e validar', 'pri', assinarB);
@@ -95,6 +99,7 @@ function render() {
   }
   if (modo === 'validado') {
     btn('Compartilhar PDF (WhatsApp)', 'pri', compartilharPDF);
+    btn('Baixar PDF', '', baixarPDF);
     if (!(store.get('validados', {})[R.id] || {}).enviado) btn('Marcar como enviado', '', () => { marcarEnviado(R.id); render(); status('Marcado como enviado.', 'ok'); });
   }
   if (modo !== 'novo' && modo !== 'aguardando' && modo !== 'conferir') btn('Novo recibo', '', () => { location.hash = ''; iniciar(); });
@@ -150,17 +155,18 @@ $$('.tipo').forEach(b => b.addEventListener('click', () => {
 }));
 
 /* ---------- fluxo ---------- */
-async function garantirNome() {
+async function garantirNome(trocar = false) {
   const id = await identidade();
-  if (id.nome) return id;
+  if (id.nome && !trocar) return id;
   return new Promise(res => {
-    const dlg = $('#dlgNome'); $('#inNome').value = '';
+    const dlg = $('#dlgNome'); $('#inNome').value = id.nome || '';
+    $('#btnCancNome').onclick = () => dlg.close('cancel');
     dlg.onclose = async () => {
       const n = $('#inNome').value.trim();
-      if (!n) return res(null);
+      if (dlg.returnValue !== 'ok' || !n) return res(id.nome ? id : null);
       id.nome = n; store.set('id', id); mostrarEu(); res(id);
     };
-    dlg.showModal();
+    dlg.returnValue = ''; dlg.showModal();
   });
 }
 function validarCampos() {
@@ -262,6 +268,16 @@ async function gerarPDF() {
   return doc.save();
 }
 const strip = ({ cod, ...x }) => x;
+async function baixarPDF() {
+  const file = await arquivoPDF();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  status('PDF baixado (pasta Downloads; no iPhone/iPad, em Arquivos → Downloads). Depois de enviá-lo, toque em "Marcar como enviado".');
+}
+async function arquivoPDF() {
+  return new File([await gerarPDF()], `Recibo-S24-${R.d}-${R.id.slice(0, 5)}.pdf`, { type: 'application/pdf' });
+}
 async function compartilharPDF() {
   const bytes = await gerarPDF();
   const nome = `Recibo-S24-${R.d}-${R.id.slice(0, 5)}.pdf`;
@@ -277,7 +293,23 @@ async function compartilharPDF() {
 
 /* ---------- início ---------- */
 async function mostrarEu() { const id = await identidade(); $('#btnEu').textContent = id.nome ? `👤 ${id.nome}` : 'Definir meu nome'; }
-$('#btnEu').onclick = async () => { const id = await identidade(); id.nome = ''; store.set('id', id); await garantirNome(); mostrarEu(); };
+$('#btnEu').onclick = () => garantirNome(true);
+
+/* aviso de instalação (some quando o app já está instalado) */
+(function avisoInstalar() {
+  const instalado = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (instalado || store.get('semAvisoInstalar')) return;
+  const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const box = $('#instalar');
+  $('#instalarTxt').innerHTML = ios
+    ? 'Toque em <b>Compartilhar</b> (quadrado com seta ↑) e depois em <b>Adicionar à Tela de Início</b>.'
+    : 'Toque no menu <b>⋮</b> do navegador e depois em <b>Instalar app</b> (ou <b>Adicionar à tela inicial</b>).';
+  let evt = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); evt = e; $('#btnInstalar').hidden = false; });
+  $('#btnInstalar').onclick = async () => { if (!evt) return; evt.prompt(); const r = await evt.userChoice; if (r.outcome === 'accepted') box.hidden = true; };
+  $('#btnFecharInst').onclick = () => { box.hidden = true; store.set('semAvisoInstalar', true); };
+  box.hidden = false;
+})();
 window.addEventListener('resize', ajustarEscala);
 
 async function iniciar() {

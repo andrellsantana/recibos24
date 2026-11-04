@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,6 +16,10 @@
   <button id="btnEu" class="link" type="button"></button>
 </header>
 
+<div id="instalar" class="instalar" hidden>
+  <div><b>Instale este app</b> para usar sem internet e manter seu nome e sua chave.<br><span id="instalarTxt"></span></div>
+  <div class="instBtns"><button type="button" id="btnInstalar" hidden>Instalar</button><button type="button" id="btnFecharInst" aria-label="Fechar">✕</button></div>
+</div>
 <div id="status" class="status" hidden></div>
 
 <!-- Réplica do S-24-T: unidades em pontos do PDF (396 × 234) -->
@@ -69,7 +73,7 @@
     <p><b>Quem está usando este aparelho?</b></p>
     <p class="peq">Seu nome aparece na assinatura. Este aparelho recebe uma chave digital própria — não há login nem senha.</p>
     <input id="inNome" required maxlength="40" placeholder="Seu nome">
-    <menu><button value="ok">Salvar</button></menu>
+    <menu><button type="button" id="btnCancNome" class="sec">Cancelar</button><button value="ok">Salvar</button></menu>
   </form>
 </dialog>
 
