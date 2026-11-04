@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recibo S-24</title>
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="bar">
+  <strong>Recibo S-24</strong>
+  <button id="btnEu" class="link" type="button"></button>
+</header>
+
+<div id="status" class="status" hidden></div>
+
+<!-- Réplica do S-24-T: unidades em pontos do PDF (396 × 234) -->
+<div id="palco" class="palco"><main id="folha" class="folha">
+  <div class="t titulo" style="left:0;right:0;top:16pt">RECIBO</div>
+
+  <div class="t neg" style="left:23pt;top:37.4pt">Escolha o tipo:</div>
+  <div class="t neg" style="left:270pt;top:37.4pt">Data:</div>
+  <input id="data" class="campo" style="left:303pt;top:34pt;width:69pt" inputmode="numeric" placeholder="dd-mm-aaaa" maxlength="10" autocomplete="off">
+
+  <button type="button" class="tipo" data-tipo="Donativo" style="left:37pt;top:50pt"><span class="cx"></span>Donativo</button>
+  <button type="button" class="tipo" data-tipo="Deposito" style="left:37pt;top:62pt" disabled><span class="cx"></span>Depósito no cofre</button>
+  <button type="button" class="tipo" data-tipo="Pagamento" style="left:165pt;top:50pt"><span class="cx"></span>Pagamento</button>
+  <button type="button" class="tipo" data-tipo="Adiantamento" style="left:165pt;top:62pt"><span class="cx"></span>Adiantamento</button>
+
+  <div class="t" style="left:37pt;top:83pt">Donativos — Obra mundial</div>
+  <div class="t" style="left:37pt;top:97.4pt">Donativos — Despesas da congregação local</div>
+  <input class="desc" data-l="0" style="left:38pt;top:108pt">
+  <input class="desc" data-l="1" style="left:38pt;top:122.4pt">
+  <input class="desc" data-l="2" style="left:38pt;top:136.8pt">
+  <div class="t neg" style="left:236pt;top:154.5pt">TOTAL:</div>
+
+  <input class="valor" data-v="0" style="top:80pt">
+  <input class="valor" data-v="1" style="top:94.5pt">
+  <input class="valor" data-v="2" style="top:108.5pt">
+  <input class="valor" data-v="3" style="top:123pt">
+  <input class="valor" data-v="4" style="top:137pt">
+  <output id="total" class="valor" style="top:151.4pt"></output>
+
+  <div class="ass" style="left:23pt"><div id="assA" class="nome"></div><div class="rot">(Preenchido por)</div></div>
+  <div class="ass" style="left:203pt"><div id="assB" class="nome"></div><div class="rot">(Conferido por)</div></div>
+
+  <div class="t rod" style="left:23pt;top:210pt">S-24-T&nbsp;&nbsp;&nbsp;05/21</div>
+</main></div>
+
+<section id="acoes" class="acoes"></section>
+
+<section id="qrBox" class="qrbox" hidden>
+  <p>Peça para quem vai <b>conferir</b> apontar a câmera do celular para este código:</p>
+  <div id="qr"></div>
+</section>
+
+<dialog id="dlgNome">
+  <form method="dialog">
+    <p><b>Quem está usando este aparelho?</b></p>
+    <p class="peq">Seu nome aparece na assinatura. Este aparelho recebe uma chave digital própria — não há login nem senha.</p>
+    <input id="inNome" required maxlength="40" placeholder="Seu nome">
+    <menu><button value="ok">Salvar</button></menu>
+  </form>
+</dialog>
+
+<script src="vendor/pdf-lib.min.js"></script>
+<script src="vendor/qrcode.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
