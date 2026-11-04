@@ -51,3 +51,10 @@ dialog button{font-size:16px;padding:8px 18px;border-radius:8px;border:0;backgro
 .pendentes li>div{flex:1}
 .pendentes button{min-height:40px;padding:0 12px;font-size:14px;border-radius:8px;border:1px solid #bbb;background:#fff}
 .pendentes button.pri{background:var(--azul);color:#fff;border-color:var(--azul)}
+dialog menu{gap:8px}
+dialog button.sec{background:#fff;color:#333;border:1px solid #bbb}
+.instalar{display:flex;gap:10px;align-items:flex-start;margin:12px 16px 0;padding:10px 12px;border-radius:8px;background:#e8f0fc;border:1px solid #a9c2ea;font-size:14px;line-height:1.4}
+.instalar>div:first-child{flex:1}
+.instBtns{display:flex;gap:6px}
+.instBtns button{min-height:34px;padding:0 10px;border-radius:8px;border:1px solid #a9c2ea;background:#fff;font-size:14px}
+#btnInstalar{background:var(--azul);color:#fff;border-color:var(--azul)}
