@@ -41,3 +41,9 @@ https://andrellsantana.github.io/recibos24/#r=eyJ2IjoxLCJpZCI6...
 - Depois disso, **preencher, assinar, conferir pelo QR Code e gerar o PDF funcionam sem internet**.
 - Só o **envio pelo WhatsApp** precisa de internet, e pode ser feito depois. O PDF fica salvo no aparelho, ou basta tocar em "Compartilhar PDF" de novo quando houver rede.
 - No iPhone, o app instalado na tela inicial e o Safari guardam os dados separados. Por isso, use sempre o mesmo (de preferência o instalado).
+
+## Validados aguardando envio
+Na tela inicial de quem conferiu aparece a lista dos recibos validados que ainda não foram enviados. Ela fica guardada só naquele aparelho.
+- **Enviar**: gera o PDF de novo e abre o compartilhamento (WhatsApp).
+- Ao compartilhar, o recibo sai da lista sozinho. Se o PDF foi só baixado, toque em **Já enviei** (ou **Marcar como enviado**).
+- Recibos enviados há mais de 60 dias são apagados do aparelho.

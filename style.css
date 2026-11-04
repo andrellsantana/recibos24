@@ -44,3 +44,10 @@ dialog input{width:100%;font-size:17px;padding:10px;border:1px solid #bbb;border
 dialog menu{display:flex;justify-content:flex-end;padding:0;margin:12px 0 0}
 dialog button{font-size:16px;padding:8px 18px;border-radius:8px;border:0;background:var(--azul);color:#fff}
 .peq{font-size:13px;color:#555}
+.pendentes{margin:0 16px 24px;padding:12px 14px;background:#fff;border-radius:12px}
+.pendentes h2{font-size:16px;margin:0 0 4px}
+.pendentes ul{list-style:none;margin:8px 0 0;padding:0}
+.pendentes li{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #eee;font-size:15px}
+.pendentes li>div{flex:1}
+.pendentes button{min-height:40px;padding:0 12px;font-size:14px;border-radius:8px;border:1px solid #bbb;background:#fff}
+.pendentes button.pri{background:var(--azul);color:#fff;border-color:var(--azul)}

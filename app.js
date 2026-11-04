@@ -79,7 +79,7 @@ function render() {
   $$('.tipo').forEach(b => { b.classList.toggle('on', b.dataset.tipo === R.t); if (b.dataset.tipo !== 'Deposito') b.disabled = !edit; });
   $$('.desc').forEach(i => { i.value = R.l[i.dataset.l]; i.disabled = !edit; });
   $$('input.valor').forEach(i => { i.value = fmtValor(R.c[i.dataset.v]); i.disabled = !edit; });
-  $('#total').textContent = fmtValor(total(R)) || '';
+  $('#total').textContent = (total(R) ? fmtValor(total(R)) : '');
   $('#assA').innerHTML = linhaAss(R.a); $('#assB').innerHTML = linhaAss(R.b);
   $('#qrBox').hidden = modo !== 'aguardando';
   const A = $('#acoes'); A.innerHTML = '';
@@ -93,9 +93,37 @@ function render() {
     btn('Conferido — assinar e validar', 'pri', assinarB);
     btn('Cancelar recibo', 'perigo', () => cancelar('B'));
   }
-  if (modo === 'validado') btn('Compartilhar PDF (WhatsApp)', 'pri', compartilharPDF);
+  if (modo === 'validado') {
+    btn('Compartilhar PDF (WhatsApp)', 'pri', compartilharPDF);
+    if (!(store.get('validados', {})[R.id] || {}).enviado) btn('Marcar como enviado', '', () => { marcarEnviado(R.id); render(); status('Marcado como enviado.', 'ok'); });
+  }
   if (modo !== 'novo' && modo !== 'aguardando' && modo !== 'conferir') btn('Novo recibo', '', () => { location.hash = ''; iniciar(); });
+  renderPendentes();
   requestAnimationFrame(ajustarEscala);
+}
+
+/* ---------- recibos validados aguardando envio (só neste aparelho) ---------- */
+function marcarEnviado(id) { const v = store.get('validados', {}); if (v[id]) { v[id].enviado = Date.now(); store.set('validados', v); } }
+function limparValidados() {
+  // guarda no máximo 200; os já enviados há mais de 60 dias são descartados
+  const v = store.get('validados', {}), lim = Date.now() - 60 * 864e5;
+  const ids = Object.keys(v).filter(id => !(v[id].enviado && v[id].enviado < lim)).sort((a, b) => v[b].b.h - v[a].b.h).slice(0, 200);
+  store.set('validados', Object.fromEntries(ids.map(id => [id, v[id]])));
+}
+function renderPendentes() {
+  const box = $('#pendentes'), ul = $('#listaPend');
+  const lista = Object.values(store.get('validados', {})).filter(r => !r.enviado).sort((a, b) => b.b.h - a.b.h);
+  box.hidden = modo !== 'novo' || !lista.length;
+  ul.innerHTML = '';
+  for (const r of lista) {
+    const li = document.createElement('li');
+    li.innerHTML = `<div><b>${esc(r.d)}</b> · ${esc(r.t === 'Deposito' ? 'Depósito' : r.t)} · <b>${fmtValor(total(r))}</b><br><span class="peq">${esc(r.a.n)} / ${esc(r.b.n)}</span></div>`;
+    const bt = (txt, cls, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.className = cls; b.onclick = fn; li.append(b); };
+    bt('Enviar', 'pri', () => { R = r; modo = 'validado'; render(); compartilharPDF(); });
+    bt('Já enviei', '', () => { if (confirm('Tirar este recibo da lista de envio?')) { marcarEnviado(r.id); renderPendentes(); } });
+    ul.append(li);
+  }
+  $('#qtdPend').textContent = lista.length;
 }
 
 /* ---------- entrada de dados ---------- */
@@ -110,7 +138,7 @@ $$('input.valor').forEach(i => {
     const d = i.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11);
     R.c[i.dataset.v] = d ? +d : null;
     i.value = fmtValor(R.c[i.dataset.v]);
-    $('#total').textContent = fmtValor(total(R)) || '';
+    $('#total').textContent = (total(R) ? fmtValor(total(R)) : '');
   });
 });
 $$('.desc').forEach(i => { i.maxLength = 60; i.addEventListener('input', () => { R.l[i.dataset.l] = i.value; }); });
@@ -239,10 +267,12 @@ async function compartilharPDF() {
   const nome = `Recibo-S24-${R.d}-${R.id.slice(0, 5)}.pdf`;
   const file = new File([bytes], nome, { type: 'application/pdf' });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: 'Recibo S-24' }); return; } catch (e) { if (e.name === 'AbortError') return; }
+    try { await navigator.share({ files: [file], title: 'Recibo S-24' }); marcarEnviado(R.id); render(); status('PDF compartilhado.', 'ok'); return; }
+    catch (e) { if (e.name === 'AbortError') return status('Envio não concluído. O recibo continua na lista "Aguardando envio".'); }
   }
   const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = nome; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  status('PDF baixado. Depois de enviá-lo pelo WhatsApp, toque em "Marcar como enviado".');
 }
 
 /* ---------- início ---------- */
@@ -262,6 +292,7 @@ async function iniciar() {
     return status('Aguardando conferência por outra pessoa, em outro aparelho.');
   }
   store.del('pendente');
+  limparValidados();
   R = novoRecibo(); modo = 'novo'; render();
 }
 window.addEventListener('hashchange', iniciar);
